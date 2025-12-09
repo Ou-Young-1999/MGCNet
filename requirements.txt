@@ -1,0 +1,10 @@
+torch==2.7.1+cu126
+numpy==2.3.3
+pandas==2.3.3
+matplotlib==3.10.7
+scikit-image==0.25.2
+scikit-learn==1.7.2
+scipy==1.16.3
+pyyaml==6.0.3
+tqdm==4.67.1
+

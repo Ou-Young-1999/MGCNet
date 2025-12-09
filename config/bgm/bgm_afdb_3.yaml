@@ -1,0 +1,81 @@
+# config.yaml
+title:
+  bgm_afdb_3
+# 数据集配置
+dataset:
+  train:
+    split_dir: "./preprocess/data_split/bihaf"
+    data_dir: "./afdb_dataset/data"
+    split: "train"
+    fold: 3
+  val:
+    split_dir: "./preprocess/data_split/bihaf"
+    data_dir: "./afdb_dataset/data"
+    split: "val"
+    fold: 3
+  test:
+    split_dir: "./preprocess/data_split/bihaf"
+    data_dir: "./afdb_dataset/data"
+    split: "val"
+    fold: 3
+
+# 数据增强配置
+augmentation:
+  train:
+    target_fs: 250
+    original_fs: 250
+    prob: 0.5
+    noise_std: 0.2
+    time_warp_sigma: 5
+    time_mask_ratio: 0.1
+    amp_scale_range: 0.5
+    zoom_in_ratio_range: 0.2
+    zoom_out_expand_range: 0.2
+    norm_type: "zscore"
+  val:
+    target_fs: 250
+    original_fs: 250
+    prob: 0.0
+    norm_type: "zscore"
+  test:
+    target_fs: 250
+    original_fs: 250
+    prob: 0.0
+    norm_type: "zscore"
+
+# 模型配置
+model:
+  name: "bgm"
+  num_classes: 2
+  in_channels: 1
+
+# 训练配置
+training:
+  num_epochs: 25
+  patience: 10
+  batch_size: 128
+  shuffle: true
+  seed: 3407
+  device: "cuda"              # auto, cuda, cpu
+
+# 优化器配置
+optimizer:
+  type: "Adam"
+  params:
+    lr: 0.001
+    weight_decay: 0.0001
+
+# 学习率调度器
+scheduler:
+  type: CosineAnnealingLR
+  params:
+    # decay_rate: 0.0001           # 衰减系数，可调
+    # last_epoch: -1             # 可选，默认 -1
+    T_max: 25
+    eta_min: 0.0001
+
+# 日志与保存
+logging:
+  tensorboard_dir: "./runs"
+  checkpoint_dir: "./checkpoint"
+  result_dir: "./results"
