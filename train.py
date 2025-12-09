@@ -170,8 +170,8 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
 
                 optimizer.zero_grad()
                 outputs,total_scl,scl_losses = model(ecgs,imgs,labels,True,True,True)
-                # loss = criterion(outputs, labels) + 0.01*total_scl
-                loss = criterion(outputs, labels)
+                loss = criterion(outputs, labels) + 0.01*total_scl
+                # loss = criterion(outputs, labels)
                 loss.backward()
                 optimizer.step()
 
@@ -196,8 +196,8 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
             for ecgs,imgs, labels in val_loader:
                 ecgs,imgs, labels = ecgs.to(device), imgs.to(device), labels.to(device)
                 outputs,total_scl,scl_losses = model(ecgs,imgs,labels,True,True,True)
-                # loss = criterion(outputs, labels) + 0.01*total_scl
-                loss = criterion(outputs, labels)
+                loss = criterion(outputs, labels) + 0.01*total_scl
+                # loss = criterion(outputs, labels)
                 val_loss += loss.item()
                 _, predicted = torch.max(outputs, 1)
                 val_correct += (predicted == labels).sum().item()
@@ -319,5 +319,6 @@ if __name__ == '__main__':
 
     # 开始训练
     train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, writer, config)
+
 
     writer.close()
