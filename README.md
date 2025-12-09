@@ -54,7 +54,6 @@ python train.py --config ./config/bgm/bgm_afdb_1.yaml
 ```
 Test the model
 ```bash
-编辑
 python test.py --config ./config/bgm/bgm_afdb_1.yaml
 ```
 
