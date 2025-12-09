@@ -17,6 +17,7 @@ This repository contains the official implementation of the paper
 
 ## 📁 Repository Structure
 
+```bash
 ├── afdb_dataset/         # Dataset directory
 ├── checkpoint/           # Trained model weights
 ├── config/               # Configuration files
@@ -29,6 +30,7 @@ This repository contains the official implementation of the paper
 ├── train.py              # Training script
 ├── test.py               # Test script
 └── README.md
+```bash
 
 ---
 
