@@ -45,10 +45,12 @@ pip install -r requirements.txt
 ```
 
 📥 Data Preparation
-Download the preprocessed dataset MIT-BIH-AF:
+
+Download the preprocessed dataset MIT-BIH-AF and checkpoints:
 (https://pan.baidu.com/s/1GuOvJJgD3hEXahxgcvr-Eg?pwd=x2ic)
 
 ▶️ Quick Start
+
 Train the model
 ```bash
 python train.py --config ./config/bgm/bgm_afdb_1.yaml
