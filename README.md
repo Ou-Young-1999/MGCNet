@@ -30,9 +30,8 @@ This repository contains the official implementation of the paper
 ├── train.py              # Training script
 ├── test.py               # Test script
 └── README.md
-```bash
+```
 
----
 
 ## 🛠️ Environment Setup
 
@@ -43,16 +42,19 @@ conda create -n myenv python=3.13.9
 conda activate myenv
 pip install -r requirements.txt
 💡 Tip: For full reproducibility, specify exact versions (e.g., torch==2.7.1+cu126).
+```
 
 📥 Data Preparation
 Download the preprocessed dataset MIT-BIH-AF:
 
 ▶️ Quick Start
 Train the model
-bash
-编辑
+```bash
 python train.py --config ./config/bgm/bgm_afdb_1.yaml
+```
 Test the model
-bash
+```bash
 编辑
 python test.py --config ./config/bgm/bgm_afdb_1.yaml
+```
+
