@@ -1,6 +1,6 @@
 # [MGCNet]
 
-> **One-sentence summary**: Synergizing Time and Frequency: A Cross-modal Deep Learning Approach for Atrial Fibrillation Detection
+Synergizing Time and Frequency: A Cross-modal Deep Learning Approach for Atrial Fibrillation Detection
 
 This repository contains the official implementation of the paper  
 
@@ -16,7 +16,7 @@ This repository contains the official implementation of the paper
 ---
 
 ## 📁 Repository Structure
-.
+
 ├── afdb_dataset/         # Dataset directory
 ├── checkpoint/           # Trained model weights
 ├── config/               # Configuration files
