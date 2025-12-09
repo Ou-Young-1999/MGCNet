@@ -9,7 +9,7 @@ This repository contains the official implementation of the paper
 ## ✨ Features
 
 - ✅ Full reproduction of the proposed method in the paper  
-- 🧪 Supports training and test on **MIT-BIH-AF**  
+- 🧪 Supports training and test on **MIT-BIH-AF**  (https://www.physionet.org/content/afdb/1.0.0/)
 - 📦 Pre-trained models available  
 - ⚙️ Clean, modular, and easy-to-extend codebase  
 
