@@ -66,7 +66,7 @@ def inter_modal_contrastive_loss(t_features, f_features, labels, temperature=0.1
 # ----------------------------
 
 class Conv1DBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=7, stride=1, padding=3):
+    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=3):
         super().__init__()
         self.conv = nn.Conv1d(in_channels, out_channels, kernel_size, stride=stride, padding=padding)
         self.bn = nn.BatchNorm1d(out_channels)
@@ -172,13 +172,13 @@ class GMCNet(nn.Module):
 
         # === 时域分支初始处理 ===
         self.time_init = nn.Sequential(
-            Conv1DBlock(1, 32, kernel_size=25, padding=12)
+            Conv1DBlock(1, 32, kernel_size=3, padding=1)
         )  # 输出: [B, 64, 1250]
 
         # === 频域分支初始处理 ===
         self.freq_init = nn.Sequential(
             Conv2DBlock(3, 32, kernel_size=3, padding=1),
-        )  # 输出: [B, 64, 128, 128]
+        )  # 输出: [B, 64, 64, 64]
 
         # === 多级 BGM + 下采样 ===
         self.bgm1 = BGM(channels=32)
@@ -261,11 +261,9 @@ class GMCNet(nn.Module):
             bidirectional=True      # 可设为 True，但需调整输出维度
         )
 
-        self.gated_fusion = GatedFusion(256)
-
         # 最终分类头
         self.classifier = nn.Sequential(
-            nn.Linear(256, 128),
+            nn.Linear(512, 128),
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(128, num_classes)
@@ -277,31 +275,31 @@ class GMCNet(nn.Module):
                 use_inter_modal=False):
         """
         x_time: [B, 1, 2500]
-        x_freq: [B, 3, 256, 256]
+        x_freq: [B, 3, 128, 128]
         """
         x_time = x_time.transpose(1, 2)
         # 初始特征提取
-        t = self.time_init(x_time)  # [B, 64, 1250]
-        f = self.freq_init(x_freq)  # [B, 64, 128, 128]
+        t = self.time_init(x_time)  # [B, 32, 1250]
+        f = self.freq_init(x_freq)  # [B, 32, 64, 64]
 
         # ===== 第一级交互 =====
-        t_b1, f_b1 = self.bgm1(t, f)  # t_b1: [B,64,625], f_b1: [B,64,64,64]
-        t_d1 = self.time_down1(t)  # [B,64,625]
-        f_d1 = self.freq_down1(f)  # [B,64,64,64]
+        t_b1, f_b1 = self.bgm1(t, f)  # t_b1: [B,32,625], f_b1: [B,32,32,32]
+        t_d1 = self.time_down1(t)  # [B,32,625]
+        f_d1 = self.freq_down1(f)  # [B,32,32,32]
 
-        t1 = torch.cat([t_b1, t_d1], dim=1)  # [B,128,625]
-        f1 = torch.cat([f_b1, f_d1], dim=1)  # [B,128,64,64]
-        t1 = self.expand1_time(t1)  # [B,128,625]
-        f1 = self.expand1_freq(f1)  # [B,128,64,64]
+        t1 = torch.cat([t_b1, t_d1], dim=1)  # [B,64,625]
+        f1 = torch.cat([f_b1, f_d1], dim=1)  # [B,64,32,32]
+        t1 = self.expand1_time(t1)  # [B,64,625]
+        f1 = self.expand1_freq(f1)  # [B,64,32,32]
 
         # ===== 第二级交互 =====
-        t_b2, f_b2 = self.bgm2(t1, f1)  # t_b2: [B,128,313], f_b2: [B,128,32,32]
-        t_d2 = self.time_down2(t1)  # [B,128,313]
-        f_d2 = self.freq_down2(f1)  # [B,128,32,32]
-        t2 = torch.cat([t_b2, t_d2], dim=1)  # [B,256,313]
-        f2 = torch.cat([f_b2, f_d2], dim=1)  # [B,256,32,32]
-        t2 = self.expand2_time(t2)  # [B,256,313]
-        f2 = self.expand2_freq(f2)  # [B,256,32,32]
+        t_b2, f_b2 = self.bgm2(t1, f1)  # t_b2: [B,64,313], f_b2: [B,64,16,16]
+        t_d2 = self.time_down2(t1)  # [B,64,313]
+        f_d2 = self.freq_down2(f1)  # [B,64,16,16]
+        t2 = torch.cat([t_b2, t_d2], dim=1)  # [B,128,313]
+        f2 = torch.cat([f_b2, f_d2], dim=1)  # [B,128,16,16]
+        t2 = self.expand2_time(t2)  # [B,128,313]
+        f2 = self.expand2_freq(f2)  # [B,128,16,16]
 
         # ===== 第三级交互 =====
         t_b3, f_b3 = self.bgm3(t2, f2)
@@ -313,15 +311,15 @@ class GMCNet(nn.Module):
         t3 = self.expand3_time(t3)
         f3 = self.expand3_freq(f3)
 
-        t3_seq = t3.transpose(1, 2)  # [B, L, 512]
-        gru_out, _ = self.gru(t3_seq)  # gru_out: [B, L, 512]
-        t_global = gru_out[:, -1, :]   # 取最后一个时间步: [B, 512]
+        t3_seq = t3.transpose(1, 2)  # [B, L, 256]
+        gru_out, _ = self.gru(t3_seq)  # gru_out: [B, L, 256]
+        t_global = gru_out[:, -1, :]   # 取最后一个时间步: [B, 256]
 
         # Global average pooling
-        f_global = F.adaptive_avg_pool2d(f3, 1).squeeze(-1).squeeze(-1)  # [B,512]
+        f_global = F.adaptive_avg_pool2d(f3, 1).squeeze(-1).squeeze(-1)  # [B,256]
 
         # 融合
-        fused = self.gated_fusion(t_global, f_global)
+        fused = torch.cat([t_global, f_global], dim=1)
         logits = self.classifier(fused)
 
         # 有监督对比损失
@@ -350,10 +348,10 @@ class GMCNet(nn.Module):
 
 if __name__ == "__main__":
     model = GMCNet()
-    ecg = torch.randn(16, 2500, 1)  # batch=16
-    img = torch.randn(16, 3, 256,256)  # batch=16
+    ecg = torch.randn(1, 2500, 1)  # batch=16
+    img = torch.randn(1, 3, 128,128)  # batch=16
     y = model(ecg,img)
-    print(y.shape)  # 应该是 [16, 2]
+    # print(y.shape)  # 应该是 [16, 2]
 
     # 计算 FLOPs 和参数量
     flops, params = profile(model, inputs=(ecg,img))
