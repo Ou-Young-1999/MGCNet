@@ -47,7 +47,7 @@ pip install -r requirements.txt
 📥 Data Preparation
 
 Download the preprocessed dataset MIT-BIH-AF, checkpoints and results:
-(https://pan.baidu.com/s/1GuOvJJgD3hEXahxgcvr-Eg?pwd=x2ic)
+(https://pan.baidu.com/s/13F7hRV824iIar55iuZmz2Q?pwd=e9gq)
 
 ▶️ Quick Start
 
