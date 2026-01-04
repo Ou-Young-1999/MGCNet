@@ -1,6 +1,6 @@
 # [MGCNet]
 
-Synergizing Time and Frequency: A Cross-modal Deep Learning Approach for Atrial Fibrillation Detection
+Robust and Generalizable Atrial Fibrillation Detection from ECG Using Time-Frequency Fusion and Supervised Contrastive Learningion
 
 This repository contains the official implementation of the paper  
 
