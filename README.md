@@ -1,6 +1,6 @@
 # [MGCNet]
 
-Robust and Generalizable Atrial Fibrillation Detection from ECG Using Time-Frequency Fusion and Supervised Contrastive Learningion
+Robust and Generalizable Atrial Fibrillation Detection from ECG Using Time-Frequency Fusion and Supervised Contrastive Learning
 
 This repository contains the official implementation of the paper  
 
